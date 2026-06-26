@@ -751,26 +751,25 @@ function cetakLaporanPDF(mod) {
             document.activeElement.blur();
         }
     });
-        // Set tarikh hari ini secara automatik bila page loading
 window.addEventListener('DOMContentLoaded', (event) => {
-    // Dapatkan tarikh Malaysia (UTC+8)
-const dateInput = document.getElementById('filter-tarikh');
-const observer = new MutationObserver(() => {
-    const today = new Date().toLocaleDateString('en-CA'); // Format YYYY-MM-DD
-    if (dateInput.value !== today) {
-        console.log("Ada skrip cuba ubah tarikh! Saya paksa balik ke hari ini.");
-        dateInput.value = today;
-        janaStatistikDinamik();
-    }
-});
+        // Dapatkan tarikh Malaysia (UTC+8)
+        const dateInput = document.getElementById('filter-tarikh');
+        const observer = new MutationObserver(() => {
+            const today = new Date().toLocaleDateString('en-CA'); // Format YYYY-MM-DD
+            if (dateInput && dateInput.value !== today) {
+                console.log("Ada skrip cuba ubah tarikh! Saya paksa balik ke hari ini.");
+                dateInput.value = today;
+                janaStatistikDinamik();
+            }
+        });
 
-if (dateInput) {
+        if (dateInput) {
             observer.observe(dateInput, { attributes: true, childList: true, subtree: true });
             // Tetapan awal
             dateInput.value = new Date().toLocaleDateString('en-CA');
             janaStatistikDinamik();
-        } // <--- Tutup kurungan if (dateInput)
-    }); // <--- Tutup kurungan window.addEventListener
+        }
+    }); // Ini menutup window.addEventListener
 </script>
 </body>
 </html>
