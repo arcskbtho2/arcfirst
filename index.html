@@ -765,11 +765,12 @@ const observer = new MutationObserver(() => {
 });
 
 if (dateInput) {
-    observer.observe(dateInput, { attributes: true, childList: true, subtree: true });
-    // Tetapan awal
-    dateInput.value = new Date().toLocaleDateString('en-CA');
-    janaStatistikDinamik();
-}
+            observer.observe(dateInput, { attributes: true, childList: true, subtree: true });
+            // Tetapan awal
+            dateInput.value = new Date().toLocaleDateString('en-CA');
+            janaStatistikDinamik();
+        } // <--- Tutup kurungan if (dateInput)
+    }); // <--- Tutup kurungan window.addEventListener
 </script>
 </body>
 </html>
