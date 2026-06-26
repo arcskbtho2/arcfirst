@@ -221,7 +221,14 @@ body {
     <footer class="mt-12 mb-6 text-xs text-zinc-600 font-medium uppercase tracking-widest flex items-center gap-2">
         <span>© 2026 AL-GHAZALI RESOURCES CENTER • SK BANDAR TUN HUSSEIN ONN 2</span>
     </footer>
-
+<div id="modal-pilih-kelas" class="fixed inset-0 bg-[#141416]/90 z-[9999] hidden flex items-center justify-center p-4">
+    <div class="bg-zinc-900 p-8 rounded-2xl border border-zinc-800 w-full max-w-sm text-center">
+        <h2 class="text-white font-bold mb-4">Sila Pilih Kelas</h2>
+        <select id="select-kelas" class="w-full p-3 mb-6 bg-zinc-950 border border-zinc-700 rounded-lg text-white">
+            </select>
+        <button onclick="simpanDataDenganKelas()" class="w-full py-3 bg-yellow-400 font-bold text-black rounded-lg">TERUSKAN</button>
+    </div>
+</div>
     <script>
         // TAMBAH KOD INI DI PALING ATAS SEKALI
     localStorage.clear(); 
@@ -251,9 +258,25 @@ body {
             document.getElementById('login-error').classList.remove('hidden');
         }
     }
+        function janaSenaraiKelas() {
+    const darjah = [1, 2, 3, 4, 5, 6];
+    const namaKelas = ['Jasmine', 'Hibiscus', 'Sunflower', 'Lavender', 'Tulip', 'Daisy', 'Sakura', 'Rose', 'Orchid', 'Lily'];
+    const dropdown = document.getElementById('select-kelas');
+    
+    // Kosongkan dahulu (jika perlu)
+    dropdown.innerHTML = '';
+    
+    darjah.forEach(d => {
+        namaKelas.forEach(n => {
+            const namaPenuh = `${d} ${n}`;
+            dropdown.innerHTML += `<option value="${namaPenuh}">${namaPenuh}</option>`;
+        });
+    });
+}
 
     // CHECK LOGIN BILA PAGE LOAD
     window.onload = function() {
+        janaSenaraiKelas();
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('login-modal').style.display = 'none';
         }
@@ -261,7 +284,7 @@ body {
         // Panggil fungsi asal cikgu di sini supaya tidak bertindih
         muatTurunDataAwal();
         setInterval(function() { muatTurunDataAutomatik(); }, 10000);
-    };
+};
 
         window.terimaDataPangkalan = function(data) {
             if(Array.isArray(data)) {
@@ -406,52 +429,73 @@ function tukarTab(tab) {
                 oscillator.start(); oscillator.stop(audioCtx.currentTime + 0.15); 
             } catch (e) { console.log("Audio disekat"); }
         }
+// [PASTIKAN KOD INI ADALAH SATU-SATUNYA VERSI UNTUK FUNGSI INI]
 
-        function hantarKeSistem(barcode) {
-            let barcodeBersih = barcode.toString().trim().replace(/\s+/g, '');
-            if (!barcodeBersih) { isScanning = false; return; }
+let dataImbasanSementara = null; 
 
-            paparNotifikasi(`Memproses barcode ${barcodeBersih}...`, 'info');
+function hantarKeSistem(barcode) {
+    if (isScanning) return; // Mencegah double scan
+    isScanning = true;
+
+    let barcodeBersih = barcode.toString().trim().replace(/\s+/g, '');
+    if (!barcodeBersih) { isScanning = false; return; }
+
+    if (sudutSemasa === "PdPc/Nilam") {
+        dataImbasanSementara = { barcode: barcodeBersih };
+        document.getElementById('modal-pilih-kelas').classList.remove('hidden');
+        isScanning = false; 
+    } else {
+        paparNotifikasi(`Memproses ${barcodeBersih}...`, 'info');
+        prosesHantarKeServer(barcodeBersih, ""); 
+    }
+}
+
+function simpanDataDenganKelas() {
+    const kelasTerpilih = document.getElementById('select-kelas').value;
+    document.getElementById('modal-pilih-kelas').classList.add('hidden');
+    
+    if (dataImbasanSementara) {
+        prosesHantarKeServer(dataImbasanSementara.barcode, kelasTerpilih);
+    }
+}
+
+function prosesHantarKeServer(barcode, kelas) {
+    const params = new URLSearchParams();
+    params.append('barcode', barcode);
+    params.append('sudut', sudutSemasa);
+    params.append('kelas', kelas);
+
+    fetch(WEB_APP_URL, { 
+        method: 'POST', 
+        body: params, 
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' } 
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            mainBunyiBip();
+            paparNotifikasi(`🎉 Berjaya! ${data.nama}`, 'success');
             
-            const params = new URLSearchParams();
-            params.append('barcode', barcodeBersih);
-            params.append('sudut', sudutSemasa);
-
-            fetch(WEB_APP_URL, { method: 'POST', body: params, headers: { 'Content-Type': 'application/x-www-form-urlencoded' } })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    mainBunyiBip();
-                    document.getElementById('input-barcode').blur();
-                    paparNotifikasi(`🎉 [${data.kategori}] Selamat Datang ${data.nama} ke ${sudutSemasa}`, 'success');
-                    
-                    let objMasa = new Date();
-                    let dd = String(objMasa.getDate()).padStart(2, '0');
-                    let mm = String(objMasa.getMonth() + 1).padStart(2, '0');
-                    let yyyy = objMasa.getFullYear();
-                    let tarikhStringSesuai = `${dd}-${mm}-${yyyy}`;
-                    let masaKiniStr = objMasa.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
-                    
-                    databaseSebenar.unshift({ 
-                        tarikhTeks: tarikhStringSesuai, 
-                        masa: masaKiniStr, 
-                        nama: data.nama, 
-                        kelas: data.kelas, 
-                        sudut: sudutSemasa,
-                        kategori: data.kategori 
-                    });
-                    janaStatistikDinamik();
-                } else {
-                    paparNotifikasi(`❌ Ralat: ${data.mesej}`, 'error');
-                }
-                setTimeout(() => { isScanning = false; }, 3000);
-            })
-            .catch(err => {
-                paparNotifikasi(`⚠️ Ralat internet/sistem backend!`, 'error');
-                setTimeout(() => { isScanning = false; }, 3000);
+            let objMasa = new Date();
+            databaseSebenar.unshift({ 
+                tarikhTeks: objMasa.toLocaleDateString('en-GB').split('/').join('-'), 
+                masa: objMasa.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }), 
+                nama: data.nama, 
+                kelas: kelas || data.kelas, 
+                sudut: sudutSemasa,
+                kategori: data.kategori 
             });
+            janaStatistikDinamik();
+        } else {
+            paparNotifikasi(`❌ Ralat: ${data.mesej}`, 'error');
         }
-
+        isScanning = false;
+    })
+    .catch(err => {
+        paparNotifikasi(`⚠️ Ralat sistem!`, 'error');
+        isScanning = false;
+    });
+}
         function paparNotifikasi(mesej, jenis) {
             const b = document.getElementById('status-box');
             b.innerText = mesej;
@@ -472,13 +516,14 @@ function logOut() {
 }
         function kiraTopPengunjungDinamik(dataBulanIni) {
             let kiraLelaki = {}; let kiraPerempuan = {}; let kiraGuru = {}; 
-            let infoPengguna = {};
+            let infoPengguna = {}; let kiraKelas = {};
 
             dataBulanIni.forEach(item => {
                 if(!item.nama) return;
                 let namaLower = item.nama.toLowerCase();
                 infoPengguna[item.nama] = item.kelas || "-";
-                
+                if(item.kelas) {
+                kiraKelas[item.kelas] = (kiraKelas[item.kelas] || 0) + 1;
                 if (item.kategori === "Guru") {
                     kiraGuru[item.nama] = (kiraGuru[item.nama] || 0) + 1;
                 } else {
@@ -501,7 +546,12 @@ function logOut() {
             let topGuru = Object.keys(kiraGuru).reduce((a, b) => kiraGuru[a] > kiraGuru[b] ? a : b, null);
             document.getElementById('top-guru-nama').innerText = topGuru || "Tiada Data";
             document.getElementById('top-guru-info').innerText = topGuru ? `${infoPengguna[topGuru]} • Kunjungan: ${kiraGuru[topGuru]} kali` : "-";
-        }
+
+            let topKelas = Object.keys(kiraKelas).reduce((a, b) => kiraKelas[a] > kiraKelas[b] ? a : b, "Tiada Data");
+    
+    // Paparkan di UI (anda perlu tambah div id="stat-top-kelas" dalam HTML)
+    document.getElementById('stat-top-kelas').innerText = topKelas;
+}
 
         // FUNGSI CARTA YANG TELAH DIKEMAS KINI DENGAN JUMLAH DAN PERATUS (%) DENGAN PLUGIN DATALABELS
 // 1. KEMASKINI CARTA: Menggunakan ejaan "Murid" penuh
