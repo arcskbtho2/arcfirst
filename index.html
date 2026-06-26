@@ -17,7 +17,11 @@
 input, select, textarea {
     -webkit-tap-highlight-color: transparent; /* Hilangkan warna kelabu bila tap */
 }
-
+.btn-loading {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
 /* Memastikan elemen yang bukan input tidak boleh difokus oleh keyboard */
 body {
     -webkit-user-select: none; /* Mengelakkan teks terpilih secara tidak sengaja */
@@ -654,7 +658,7 @@ function janaStatistikDinamik() {
     kemasKiniCartaBar(kaunter);
     
     // 6. Update Jadual Analisa (Jadual bawah carta)
-   const tBody = document.getElementById('analisa-tbody');
+   const tBody = document.getElementById('log-table-body');
     if (tBody) {
         if (filteredData.length === 0) {
             console.log("Tiada data untuk tarikh/bulan ini.");
