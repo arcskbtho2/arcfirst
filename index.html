@@ -234,8 +234,10 @@ body {
     <div class="bg-zinc-900 p-8 rounded-2xl border border-zinc-800 w-full max-w-sm text-center">
         <h2 class="text-white font-bold mb-4">Sila Pilih Kelas</h2>
         <select id="select-kelas" class="w-full p-3 mb-6 bg-zinc-950 border border-zinc-700 rounded-lg text-white">
-            </select>
-        <button onclick="simpanDataDenganKelas()" class="w-full py-3 bg-yellow-400 font-bold text-black rounded-lg">TERUSKAN</button>
+        </select>
+        <button id="btn-teruskan" onclick="simpanDataDenganKelas()" class="w-full py-3 bg-yellow-400 font-bold text-black rounded-lg hover:bg-yellow-500 transition-all">
+            TERUSKAN
+        </button>
     </div>
 </div>
     <script>
@@ -267,6 +269,12 @@ body {
             document.getElementById('login-error').classList.remove('hidden');
         }
     }
+        function formatTarikhStandard(tarikhTeks) {
+    // Tukar DD-MM-YYYY kepada YYYY-MM-DD untuk perbandingan
+    const parts = tarikhTeks.split('-');
+    if (parts.length === 3) return `${parts[2]}-${parts[1]}-${parts[0]}`;
+    return tarikhTeks;
+}
         function janaSenaraiKelas() {
     const darjah = [1, 2, 3, 4, 5, 6];
     const namaKelas = ['JASMINE', 'HIBISCUS', 'SUNFLOWER', 'LAVENDER', 'TULIP', 'DAISY', 'SAKURA', 'ROSE', 'ORCHID', 'LILY'];
@@ -523,48 +531,37 @@ function logOut() {
     // 2. Refresh terus halaman untuk buang semua data dari memori
     window.location.reload(); 
 }
-        function kiraTopPengunjungDinamik(dataBulanIni) {
-            let kiraLelaki = {}; let kiraPerempuan = {}; let kiraGuru = {}; 
-            let infoPengguna = {}; let kiraKelas = {};
-
-           dataBulanIni.forEach(item => {
-        if(!item.nama) return;
-        
-        infoPengguna[item.nama] = item.kelas || "-";
-        
-        // 1. KATEGORI GURU
-        if (item.kategori && item.kategori.toLowerCase() === "guru") {
+ function kiraTopPengunjungDinamik(dataBulanIni) {
+    let kiraGuru = {}, kiraLelaki = {}, kiraPerempuan = {};
+    
+    dataBulanIni.forEach(item => {
+        let kat = (item.kategori || "").toString().toLowerCase().trim();
+        if (kat.includes('guru')) {
             kiraGuru[item.nama] = (kiraGuru[item.nama] || 0) + 1;
-        } 
-        // 2. KATEGORI MURID
-        else if (item.kelas) {
-            kiraKelas[item.kelas] = (kiraKelas[item.kelas] || 0) + 1;
-            
-            let namaLower = item.nama.toLowerCase();
-            if (namaLower.includes('binti') || namaLower.includes('bte') || namaLower.includes('bt') || namaLower.includes('a/p')) {
+        } else {
+            let n = item.nama.toLowerCase();
+            if (n.includes('binti') || n.includes('bt') || n.includes('a/p')) {
                 kiraPerempuan[item.nama] = (kiraPerempuan[item.nama] || 0) + 1;
             } else {
                 kiraLelaki[item.nama] = (kiraLelaki[item.nama] || 0) + 1;
             }
         }
     });
-            let topLelaki = Object.keys(kiraLelaki).reduce((a, b) => kiraLelaki[a] > kiraLelaki[b] ? a : b, null);
-            document.getElementById('top-lelaki-nama').innerText = topLelaki || "Tiada Data";
-            document.getElementById('top-lelaki-info').innerText = topLelaki ? `${infoPengguna[topLelaki]} • Kunjungan: ${kiraLelaki[topLelaki]} kali` : "-";
-
-            let topPerempuan = Object.keys(kiraPerempuan).reduce((a, b) => kiraPerempuan[a] > kiraPerempuan[b] ? a : b, null);
-            document.getElementById('top-perempuan-nama').innerText = topPerempuan || "Tiada Data";
-            document.getElementById('top-perempuan-info').innerText = topPerempuan ? `${infoPengguna[topPerempuan]} • Kunjungan: ${kiraPerempuan[topPerempuan]} kali` : "-";
-
-            let topGuru = Object.keys(kiraGuru).reduce((a, b) => kiraGuru[a] > kiraGuru[b] ? a : b, null);
-            document.getElementById('top-guru-nama').innerText = topGuru || "Tiada Data";
-            document.getElementById('top-guru-info').innerText = topGuru ? `${infoPengguna[topGuru]} • Kunjungan: ${kiraGuru[topGuru]} kali` : "-";
-
-            let topKelas = Object.keys(kiraKelas).reduce((a, b) => kiraKelas[a] > kiraKelas[b] ? a : b, "Tiada Data");
     
-    // Paparkan di UI (anda perlu tambah div id="stat-top-kelas" dalam HTML)
-    document.getElementById('stat-top-kelas').innerText = topKelas;
-                }
+    // ... (bahagian bawah fungsi ini kekalkan seperti asal)
+    let topLelaki = Object.keys(kiraLelaki).reduce((a, b) => kiraLelaki[a] > kiraLelaki[b] ? a : b, null);
+    document.getElementById('top-lelaki-nama').innerText = topLelaki || "Tiada Data";
+    document.getElementById('top-lelaki-info').innerText = topLelaki ? `${infoPengguna[topLelaki]} • ${kiraLelaki[topLelaki]} kali` : "-";
+
+    let topPerempuan = Object.keys(kiraPerempuan).reduce((a, b) => kiraPerempuan[a] > kiraPerempuan[b] ? a : b, null);
+    document.getElementById('top-perempuan-nama').innerText = topPerempuan || "Tiada Data";
+    document.getElementById('top-perempuan-info').innerText = topPerempuan ? `${infoPengguna[topPerempuan]} • ${kiraPerempuan[topPerempuan]} kali` : "-";
+
+    let topGuru = Object.keys(kiraGuru).reduce((a, b) => kiraGuru[a] > kiraGuru[b] ? a : b, null);
+ document.getElementById('top-guru-nama').innerText = Object.keys(kiraGuru).reduce((a, b) => (kiraGuru[a]||0) > (kiraGuru[b]||0) ? a : b, "Tiada Data");
+}
+    document.getElementById('stat-top-kelas').innerText = Object.keys(kiraKelas).reduce((a, b) => kiraKelas[a] > kiraKelas[b] ? a : b, "Tiada Data");
+}
 
         // FUNGSI CARTA YANG TELAH DIKEMAS KINI DENGAN JUMLAH DAN PERATUS (%) DENGAN PLUGIN DATALABELS
 // 1. KEMASKINI CARTA: Menggunakan ejaan "Murid" penuh
@@ -615,35 +612,25 @@ function logOut() {
         });
     }
 function janaStatistikDinamik() {
-    // 1. Dapatkan data
-    let dataPenuh = (typeof databaseSebenar !== 'undefined' && databaseSebenar.length > 0) 
-                        ? databaseSebenar 
-                        : JSON.parse(localStorage.getItem('dataPSS') || '[]');
+    const dataPenuh = databaseSebenar;
+    const targetHari = document.getElementById('filter-tarikh').value; // YYYY-MM-DD
+    const bulanDipilih = document.getElementById('filter-bulan').value; // 0-11
     
-    let filteredData = [];
-    let targetHari = document.getElementById('filter-tarikh').value; // Format: YYYY-MM-DD
-    
-    if (!targetHari) return;
-
-    // 2. Logik Penapisan yang Dibaiki (Sangat Penting!)
-    // Kita bersihkan tarikh supaya format DD-MM-YYYY (DB) dan YYYY-MM-DD (Input) boleh sepadan
-    filteredData = dataPenuh.filter(item => {
+    let filteredData = dataPenuh.filter(item => {
         if (!item.tarikhTeks) return false;
         
+        let tarikhItem = formatTarikhStandard(item.tarikhTeks);
+        
         if (modAnalisaSemasa === 'hari') {
-            // Tukar YYYY-MM-DD kepada DD-MM-YYYY untuk disamakan dengan format database
-            let parts = targetHari.split('-'); 
-            let targetFormatDB = `${parts[2]}-${parts[1]}-${parts[0]}`;
-            return item.tarikhTeks === targetFormatDB || item.tarikhTeks === targetHari;
+            return tarikhItem === targetHari;
         } else {
-            let bulanDipilih = document.getElementById('filter-bulan').value;
-            let targetBulan = String(parseInt(bulanDipilih) + 1).padStart(2, '0'); 
-            return item.tarikhTeks.split('-')[1] === targetBulan;
+            let targetBulan = String(parseInt(bulanDipilih) + 1).padStart(2, '0');
+            return tarikhItem.split('-')[1] === targetBulan;
         }
     });
 
     // 3. Update Jumlah Statistik
-    document.getElementById('stat-total').innerText = filteredData.length;
+document.getElementById('stat-total').innerText = filteredData.length;
 
     // 4. Kira Sudut Popular
     let kaunter = { 
@@ -661,29 +648,20 @@ function janaStatistikDinamik() {
     kemasKiniCartaBar(kaunter);
     
     // 6. Update Jadual Analisa (Menggunakan ID yang betul: log-table-body)
-    const tBody = document.getElementById('log-table-body');
-    if (tBody) {
-        if (filteredData.length === 0) {
-            tBody.innerHTML = `<tr><td colspan="5" class="p-4 text-center text-zinc-500">Tiada rekod ditemui untuk tempoh ini.</td></tr>`;
-        } else {
-            tBody.innerHTML = filteredData.map(row => {
-                // Logik Guru: Pastikan ia detect 'guru' walaupun huruf besar/kecil
-                let kategoriData = row.kategori ? row.kategori.toString().toLowerCase() : 'murid';
-                let isGuru = kategoriData.includes('guru');
-                
-                let warnaKategori = isGuru ? 'text-purple-400 border-purple-800' : 'text-blue-400 border-blue-800';
-                let labelKategori = isGuru ? 'GURU' : 'MURID';
-                let paparanKelas = isGuru ? '-' : (row.kelas || '-');
-
-                return `
-                    <tr class="hover:bg-zinc-900/40 text-xs">
-                        <td class="p-4 font-bold text-zinc-400">${row.masa || '-'}</td>
-                        <td class="p-4"><span class="px-2 py-0.5 border rounded text-[10px] uppercase font-bold ${warnaKategori}">${labelKategori}</span></td>
-                        <td class="p-4 font-bold text-white">${row.nama || 'Tiada Nama'}</td>
-                        <td class="p-4 text-zinc-300">${paparanKelas}</td>
-                        <td class="p-4 text-yellow-400">${row.sudut || '-'}</td>
-                    </tr>`;
-            }).join('');
+  const tBody = document.getElementById('log-table-body');
+    tBody.innerHTML = filteredData.map(row => {
+        let kat = (row.kategori || "").toString().toLowerCase().trim();
+        let isGuru = kat.includes('guru');
+        
+        return `
+            <tr class="text-xs">
+                <td class="p-4 text-zinc-400">${row.masa || '-'}</td>
+                <td class="p-4"><span class="px-2 py-0.5 border rounded ${isGuru ? 'text-purple-400 border-purple-800' : 'text-blue-400 border-blue-800'}">${isGuru ? 'GURU' : 'MURID'}</span></td>
+                <td class="p-4 text-white font-bold">${row.nama || '-'}</td>
+                <td class="p-4">${isGuru ? '-' : (row.kelas || '-')}</td>
+                <td class="p-4 text-yellow-400">${row.sudut || '-'}</td>
+            </tr>`;
+    }).join('');
         }
     }
     kiraTopPengunjungDinamik(filteredData);
