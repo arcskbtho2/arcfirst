@@ -232,7 +232,7 @@
     <script>
 localStorage.clear();
     sessionStorage.clear();
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzfhZjdi3jA2HAje5XPVnpOooj_CyS4VIWHeu6ATqNx9S867yfDaC1o-ZW52eAqSlo_uQ/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxLdQ9UJ_ltZ77_EQloKRcMrjOlIOkZEjFpeLKeu9r0LpB-5Vrus-JcAgZH6NwV_eKQqQ/exec"; 
     let sudutSemasa = "Ruang Bacaan & Google TV"; 
     let html5QrcodeScanner = null;
     let modAnalisaSemasa = "hari"; 
@@ -474,13 +474,13 @@ function prosesHantarKeServer(barcode, kelas) {
             
             let objMasa = new Date();
             databaseSebenar.unshift({ 
-                tarikhTeks: objMasa.toLocaleDateString('en-GB').split('/').join('-'), 
-                masa: objMasa.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }), 
-                nama: data.nama, 
-                kelas: kelas || data.kelas, 
-                sudut: sudutSemasa,
-                kategori: data.kategori 
-            });
+    tarikhTeks: objMasa.toLocaleDateString('en-GB').split('/').join('-'), 
+    masa: objMasa.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }), 
+    nama: data.nama, 
+    kelas: kelas || data.kelas, 
+    sudut: sudutSemasa,
+    kategori: data.kategori // Pastikan ini ada!
+});
             janaStatistikDinamik();
         } else {
             paparNotifikasi(`❌ Ralat: ${data.mesej}`, 'error');
