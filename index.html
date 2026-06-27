@@ -827,7 +827,7 @@ function cetakLaporanPelawat() {
     // Tapis hanya data pelawat
     let dataPelawat = databaseSebenar.filter(r => (r.kategori || "").toLowerCase().includes('pelawat'));
     
-    // Jana baris jadual (Tarikh, Masa, Nama, Institusi SAHAJA)
+    // Jana baris jadual
     let barisPelawat = dataPelawat.map(row => `
         <tr>
             <td style="padding:10px; border:1px solid #333;">${row.tarikhTeks || '-'}</td>
@@ -838,21 +838,29 @@ function cetakLaporanPelawat() {
 
     const printWindow = window.open('', '_blank');
     
-    printWindow.document.write(`<html><head><title>Senarai Pelawat</title>
+    printWindow.document.write(`<html><head><title>Sistem E-Kehadiran Lawatan SK Bandar Tun Hussein Onn 2</title>
         <style>
-            body{font-family:sans-serif; padding:20px;}
-            table{width:100%; border-collapse:collapse;}
-            th, td{padding:10px; border:1px solid #333; text-align:left;}
-            h1{text-align:center;}
-        </style></head><body>
+            body { font-family: sans-serif; padding: 20px; }
+            table { width: 100%; border-collapse: collapse; }
+            th, td { padding: 10px; border: 1px solid #333; text-align: left; }
+            h1 { text-align: center; }
+            
+            /* Tetapan saiz lajur */
+            .col-tarikh { width: 15%; }
+            .col-masa { width: 10%; }
+            .col-nama { width: 40%; }
+            .col-institusi { width: 35%; }
+        </style>
+        </head>
+        <body>
             <h1>Rekod Pelawat PSS</h1>
             <table>
                 <thead>
                     <tr>
-                        <th>Tarikh</th>
-                        <th>Masa</th>
-                        <th>Nama</th>
-                        <th>Institusi</th>
+                        <th class="col-tarikh">Tarikh</th>
+                        <th class="col-masa">Masa</th>
+                        <th class="col-nama">Nama</th>
+                        <th class="col-institusi">Institusi</th>
                     </tr>
                 </thead>
                 <tbody>${barisPelawat}</tbody>
@@ -860,7 +868,6 @@ function cetakLaporanPelawat() {
             <script>window.print(); window.close();<\/script>
         </body></html>`);
 }
-
 // --- EVENT LISTENERS ---
 document.addEventListener('click', function(event) {
     const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan', 'input-nama-pelawat', 'input-institusi-pelawat'];
