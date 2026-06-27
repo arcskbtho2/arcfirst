@@ -784,13 +784,13 @@ function cetakLaporanPDF(mod) {
             <h1 style="text-align:center;">${tajukLaporan}</h1>
             <img src="${dataUrlCarta}" style="width:100%; max-width:600px; display:block; margin:auto;">
             
-            <h3>Top Pengunjung:</h3>
-            <div style="margin-bottom:20px;">
-                <div class="box-top"><strong>Lelaki:</strong><br>${topLelaki}</div>
-                <div class="box-top"><strong>Perempuan:</strong><br>${topPerempuan}</div>
-                <div class="box-top"><strong>Guru:</strong><br>${topGuru}</div>
-                <div class="box-top"><strong>Kelas:</strong><br>${topKelas}</div>
-            </div>
+          <h3 style="margin-bottom: 10px;">🏅 Top Pengunjung:</h3>
+    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Murid Lelaki:</strong> ${topLelaki}</li>
+        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Murid Perempuan:</strong> ${topPerempuan}</li>
+        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Guru:</strong> ${topGuru}</li>
+        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Kelas Paling Aktif:</strong> ${topKelas}</li>
+    </ul>
 
             <h3>Jadual Ringkasan:</h3>
             <table><thead><tr><th>Sudut</th><th>Jumlah</th></tr></thead><tbody>${barisJadual}</tbody></table>
