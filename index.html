@@ -819,11 +819,23 @@ function cetakLaporanPDF(mod) {
         rujukanCartaBar.update();
     }, 500);
 }
-        function cetakLaporanPelawat() {
-    const tableHTML = document.getElementById('log-table-pelawat').innerHTML;
+ function cetakLaporanPelawat() {
+    // Kita ambil data asal dan map semula supaya ada Tarikh
+    // Andaikan databaseSebenar adalah array objek anda
+    let dataPelawat = databaseSebenar.filter(r => (r.kategori || "").toLowerCase().includes('pelawat'));
+    
+    // Jana baris jadual dengan Tarikh
+    let barisPelawat = dataPelawat.map(row => `
+        <tr>
+            <td style="padding:10px; border:1px solid #333;">${row.tarikhTeks || '-'}</td>
+            <td style="padding:10px; border:1px solid #333;">${row.masa}</td>
+            <td style="padding:10px; border:1px solid #333;">${row.nama}</td>
+            <td style="padding:10px; border:1px solid #333;">${row.kelas || '-'}</td> <td style="padding:10px; border:1px solid #333;">${row.sudut}</td>
+        </tr>`).join('');
+
     const printWindow = window.open('', '_blank');
     
-    printWindow.document.write(`<html><head><title>Senarai Pelawat</title>
+    printWindow.document.write(`<html><head><title>Sistem E-Kehadiran PSS (Lawatan)</title>
         <style>
             body{font-family:sans-serif; padding:20px;}
             table{width:100%; border-collapse:collapse;}
@@ -833,9 +845,15 @@ function cetakLaporanPDF(mod) {
             <h1>Rekod Pelawat PSS</h1>
             <table>
                 <thead>
-                    <tr><th>Masa</th><th>Kategori</th><th>Nama</th><th>Institusi</th><th>Sudut</th></tr>
+                    <tr>
+                        <th>Tarikh</th>
+                        <th>Masa</th>
+                        <th>Nama</th>
+                        <th>Institusi</th>
+                        <th>Sudut</th>
+                    </tr>
                 </thead>
-                <tbody>${tableHTML}</tbody>
+                <tbody>${barisPelawat}</tbody>
             </table>
             <script>window.print(); window.close();<\/script>
         </body></html>`);
