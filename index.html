@@ -16,6 +16,10 @@
         input, select, textarea { -webkit-tap-highlight-color: transparent; }
         .btn-loading { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
         body { user-select: none; }
+        #select-kelas {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
     </style>
 </head>
 <body class="bg-[#141416] text-slate-100 font-sans min-h-screen flex flex-col items-center p-4">
@@ -713,40 +717,38 @@ function cetakLaporanPDF(mod) {
 }
 
 // --- EVENT LISTENERS & MODAL ---
+// --- EVENT LISTENERS & MODAL ---
 document.addEventListener('click', function(event) {
-    // 1. Senarai ID yang perlukan interaksi manual (Keyboard & Dropdown)
     const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan'];
     
-    // 2. Semak jika elemen yang diklik adalah elemen manual
-    const targetId = event.target.id;
-
     // Jika cikgu klik pada elemen manual, JANGAN buat apa-apa, biar keyboard/dropdown berfungsi
-    if (elemenManual.includes(targetId)) {
+    if (elemenManual.includes(event.target.id)) {
         return;
     }
 
-    // 3. Jika cikgu klik pada ruang kosong (bukan input, bukan dropdown), 
-    // sistem akan terus fokus ke input-barcode secara automatik untuk imbasan USB
-    document.getElementById('input-barcode').focus();
+    // Jika cikgu klik di mana-mana ruang kosong, fokus ke input barcode
+    const inputBarcode = document.getElementById('input-barcode');
+    if (inputBarcode) {
+        inputBarcode.focus();
+    }
 });
 
-// 4. Pastikan fokus tetap pada input-barcode untuk imbasan USB
-// TAPI dengan syarat: JANGAN ganggu jika cikgu sedang menaip di Login atau pilih Kelas
+// Pastikan fokus tetap pada input-barcode untuk imbasan USB
 document.getElementById('input-barcode').addEventListener('blur', function(e) {
     const target = e.relatedTarget || document.activeElement;
     
-    // Jika fokus baru adalah Login atau Dropdown, biar sahaja dia berfungsi
+    // Syarat: JANGAN ganggu jika cikgu sedang menaip di Login atau pilih Kelas
     if (target && (target.id === 'login-id' || target.id === 'login-pass' || target.id === 'select-kelas')) {
         return;
     }
     
-    // Jika tidak, paksa fokus balik ke barcode supaya imbasan sentiasa sedia
+    // Delay 150ms supaya sistem sempat buka dropdown/keyboard sebelum tarik balik fokus
     setTimeout(() => {
         document.getElementById('input-barcode').focus();
     }, 150);
 });
 
-// 5. Fungsi tutup modal kelas
+// Fungsi tutup modal kelas
 window.onclick = function(event) {
     const modalKelas = document.getElementById('modal-pilih-kelas');
     if (event.target == modalKelas) {
