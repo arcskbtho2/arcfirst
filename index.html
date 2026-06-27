@@ -799,6 +799,8 @@ document.getElementById('input-barcode').addEventListener('blur', function(e) {
         'filter-tarikh', 
         'filter-bulan'
     ];
+    const modalPelawatBuka = !document.getElementById('modal-input-pelawat').classList.contains('hidden');
+    const modalKelasBuka = !document.getElementById('modal-pilih-kelas').classList.contains('hidden');
     // Syarat: JANGAN ganggu jika cikgu sedang menaip di Login atau pilih Kelas
     if (target && (target.id === 'login-id' || target.id === 'login-pass' || target.id === 'select-kelas')) {
         return;
