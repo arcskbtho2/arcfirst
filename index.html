@@ -607,12 +607,23 @@ function janaStatistikDinamik() {
 
         kemasKiniCartaBar(kaunter);
         
-        const tBody = document.getElementById('log-table-body');
-        tBody.innerHTML = filteredData.map(row => {
-            let kat = (row.kategori || "").toString().toLowerCase().trim();
-            let isGuru = kat.includes('guru');
-            return `<tr class="text-xs border-b border-zinc-800"><td class="p-4">${row.masa}</td><td class="p-4">${isGuru ? 'GURU' : 'MURID'}</td><td class="p-4 font-bold">${row.nama}</td><td class="p-4">${isGuru ? '-' : row.kelas}</td><td class="p-4 text-yellow-400">${row.sudut}</td></tr>`;
-        }).join('');
+       const tBody = document.getElementById('log-table-body');
+tBody.innerHTML = filteredData.map(row => {
+    let kat = (row.kategori || "").toString().toLowerCase().trim();
+    let isGuru = kat.includes('guru');
+    
+    // Penambahan class warna: text-blue-400 untuk Murid, text-purple-400 untuk Guru
+    let warnaKategori = isGuru ? 'text-purple-400' : 'text-blue-400';
+    
+    return `
+        <tr class="text-xs border-b border-zinc-800">
+            <td class="p-4">${row.masa}</td>
+            <td class="p-4 font-bold ${warnaKategori}">${isGuru ? 'GURU' : 'MURID'}</td>
+            <td class="p-4 font-bold">${row.nama}</td>
+            <td class="p-4">${isGuru ? '-' : row.kelas}</td>
+            <td class="p-4 text-yellow-400">${row.sudut}</td>
+        </tr>`;
+}).join('');
         
         kiraTopPengunjungDinamik(filteredData);
     }
