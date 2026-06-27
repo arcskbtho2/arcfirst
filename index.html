@@ -232,7 +232,7 @@
     <script>
 localStorage.clear();
     sessionStorage.clear();
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby25spjSFfUKIMLX2Y9_wnYNdvfZEf21zl4GspTwKfYKKWKITQKoRKRzASVqrvB4Ct7sA/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzun9F7HeKXSlkT6MbXuBy4-4lJIBfDth--j_TX6TMdkDPMGImudcX3f1cXHIf0tDPJfw/exec"; 
     let sudutSemasa = "Ruang Bacaan & Google TV"; 
     let html5QrcodeScanner = null;
     let modAnalisaSemasa = "hari"; 
@@ -516,17 +516,22 @@ function kiraTopPengunjungDinamik(data) {
     let kiraLelaki = {}, kiraPerempuan = {}, kiraGuru = {}, kiraKelas = {};
     
     data.forEach(item => {
+        // Ambil kategori dari data yang dihantar oleh doGet
         let kat = (item.kategori || "").toString().toLowerCase().trim();
         let nama = (item.nama || "").trim();
         let kelas = (item.kelas || "").trim();
         
+        // Logik pengasingan mengikut kategori
         if (kat.includes('guru')) {
             kiraGuru[nama] = (kiraGuru[nama] || 0) + 1;
         } else {
-            if(kelas && kelas !== "-") kiraKelas[kelas] = (kiraKelas[kelas] || 0) + 1;
+            // Hanya kira kelas untuk murid
+            if (kelas && kelas !== "-" && kelas !== "Tiada Data") {
+                kiraKelas[kelas] = (kiraKelas[kelas] || 0) + 1;
+            }
             
+            // Logik jantina murid
             let n = nama.toLowerCase();
-            // Logik jantina
             if (n.includes('binti') || n.includes('bt') || n.includes('a/p')) {
                 kiraPerempuan[nama] = (kiraPerempuan[nama] || 0) + 1;
             } else {
@@ -535,11 +540,13 @@ function kiraTopPengunjungDinamik(data) {
         }
     });
 
+    // Fungsi pembantu untuk mencari yang tertinggi
     const getTop = (obj) => {
         let keys = Object.keys(obj);
         return keys.length > 0 ? keys.reduce((a, b) => obj[a] > obj[b] ? a : b) : "Tiada Data";
     };
 
+    // Update UI
     document.getElementById('top-lelaki-nama').innerText = getTop(kiraLelaki);
     document.getElementById('top-perempuan-nama').innerText = getTop(kiraPerempuan);
     document.getElementById('top-guru-nama').innerText = getTop(kiraGuru);
