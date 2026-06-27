@@ -790,7 +790,8 @@ document.addEventListener('click', function(event) {
 document.getElementById('input-barcode').addEventListener('blur', function(e) {
     const target = e.relatedTarget || document.activeElement;
 
-    const elemenDibenarkan = [
+    // Senarai ID yang kita tidak mahu ganggu
+    const kotakTaip = [
         'login-id', 
         'login-pass', 
         'select-kelas', 
@@ -799,14 +800,17 @@ document.getElementById('input-barcode').addEventListener('blur', function(e) {
         'filter-tarikh', 
         'filter-bulan'
     ];
-    const modalPelawatBuka = !document.getElementById('modal-input-pelawat').classList.contains('hidden');
-    const modalKelasBuka = !document.getElementById('modal-pilih-kelas').classList.contains('hidden');
-    // Syarat: JANGAN ganggu jika cikgu sedang menaip di Login atau pilih Kelas
-    if (target && (target.id === 'login-id' || target.id === 'login-pass' || target.id === 'select-kelas')) {
-        return;
+
+    // Semak jika modal sedang terbuka
+    const modalBuka = !document.getElementById('modal-input-pelawat').classList.contains('hidden') || 
+                      !document.getElementById('modal-pilih-kelas').classList.contains('hidden');
+
+    // SYARAT: Jika target ada dalam senarai ATAU modal terbuka, JANGAN buat apa-apa
+    if ((target && kotakTaip.includes(target.id)) || modalBuka) {
+        return; 
     }
     
-    // Delay 150ms supaya sistem sempat buka dropdown/keyboard sebelum tarik balik fokus
+    // Delay 200ms untuk tarik balik fokus (hanya jika modal tutup dan bukan sedang menaip)
     setTimeout(() => {
         document.getElementById('input-barcode').focus();
     }, 200);
