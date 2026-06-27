@@ -20,6 +20,15 @@
     pointer-events: auto !important;
     cursor: pointer !important;
 }
+        .jadual-scroll {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 1px solid #27272a;
+        border-radius: 0.75rem;
+    }
+    .jadual-scroll::-webkit-scrollbar { width: 6px; }
+    .jadual-scroll::-webkit-scrollbar-track { background: #141416; }
+    .jadual-scroll::-webkit-scrollbar-thumb { background: #facc15; border-radius: 3px; }
     </style>
 </head>
 <body class="bg-[#141416] text-slate-100 font-sans min-h-screen flex flex-col items-center p-4">
@@ -204,9 +213,10 @@
         </div>
 
 <div class="overflow-x-auto mt-6">
-    <h3 class="text-blue-400 font-bold mt-4">Rekod Murid</h3>
-    <table class="w-full text-left border-collapse mb-6">
-        <thead>
+   <h3 class="text-blue-400 font-bold mt-4">Rekod Murid</h3>
+<div class="jadual-scroll mb-6">
+    <table class="w-full text-left border-collapse">
+        <thead class="sticky top-0 bg-zinc-900 z-10">
             <tr class="text-xs text-zinc-500 border-b border-zinc-800">
                 <th class="p-4">Masa</th><th class="p-4">Kategori</th><th class="p-4">Nama</th><th class="p-4">Kelas</th><th class="p-4">Sudut</th>
             </tr>
@@ -214,16 +224,28 @@
         <tbody id="log-table-murid"></tbody>
     </table>
 
-    <h3 class="text-purple-400 font-bold mt-4">Rekod Guru</h3>
-    <table class="w-full text-left border-collapse mb-6">
+    <h3 class="text-blue-400 font-bold mt-4">Rekod Guru</h3>
+<div class="jadual-scroll mb-6">
+    <table class="w-full text-left border-collapse">
+        <thead class="sticky top-0 bg-zinc-900 z-10">
+            <tr class="text-xs text-zinc-500 border-b border-zinc-800">
+                <th class="p-4">Masa</th><th class="p-4">Kategori</th><th class="p-4">Nama</th><th class="p-4">Kelas</th><th class="p-4">Sudut</th>
+            </tr>
+        </thead>
         <tbody id="log-table-guru"></tbody>
     </table>
 
-    <h3 class="text-orange-400 font-bold mt-4">Rekod Pelawat</h3>
-    <table class="w-full text-left border-collapse mb-6">
+   <h3 class="text-blue-400 font-bold mt-4">Rekod Pelawat</h3>
+<div class="jadual-scroll mb-6">
+    <table class="w-full text-left border-collapse">
+        <thead class="sticky top-0 bg-zinc-900 z-10">
+            <tr class="text-xs text-zinc-500 border-b border-zinc-800">
+                <th class="p-4">Masa</th><th class="p-4">Kategori</th><th class="p-4">Nama</th><th class="p-4">Institusi</th><th class="p-4">Sudut</th>
+            </tr>
+        </thead>
         <tbody id="log-table-pelawat"></tbody>
     </table>
-    </div>
+</div>
 </section>
     </main>
 
