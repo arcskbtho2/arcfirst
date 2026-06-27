@@ -472,30 +472,29 @@ function simpanDataPelawat() {
 // [PASTIKAN KOD INI ADALAH SATU-SATUNYA VERSI UNTUK FUNGSI INI]
 
 let dataImbasanSementara = null; 
-
 function hantarKeSistem(barcode) {
-    if (isScanning) return; // Mencegah double scan
+    if (isScanning) return;
     isScanning = true;
 
     let barcodeBersih = barcode.toString().trim().replace(/\s+/g, '');
     if (!barcodeBersih) { isScanning = false; return; }
 
-    // Kita gunakan satu struktur if-else yang kemas
+    // DEBUG: Cuba tambah alert ini untuk check apa yang sistem 'nampak'
+    console.log("Sudut Semasa:", sudutSemasa); 
+
     if (sudutSemasa === "PdPc/Nilam") {
         dataImbasanSementara = { barcode: barcodeBersih };
         document.getElementById('modal-pilih-kelas').classList.remove('hidden');
-        isScanning = false; // Buka modal, jadi kita set false
+        isScanning = false; 
     } 
     else if (sudutSemasa === "Lawatan") {
-        barcodeSementara = barcodeBersih; // Simpan untuk digunakan nanti
-        panggilModalPelawat(); // Panggil fungsi modal pelawat
-        isScanning = false; // Buka modal, jadi kita set false
+        barcodeSementara = barcodeBersih;
+        document.getElementById('modal-input-pelawat').classList.remove('hidden'); // Ini yang patut buka modal
+        isScanning = false;
     } 
     else {
-        // Untuk sudut lain (bukan Nilam/Lawatan)
         paparNotifikasi(`Memproses ${barcodeBersih}...`, 'info');
         prosesHantarKeServer(barcodeBersih, "");
-        // isScanning akan diset false di dalam prosesHantarKeServer
     }
 }
 
