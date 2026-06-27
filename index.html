@@ -709,9 +709,13 @@ function janaStatistikDinamik() {
             </tr>`).join('');
     }
 
-    document.getElementById('log-table-murid').innerHTML = janaBaris(dataMurid, 'text-blue-400', 'MURID');
-    document.getElementById('log-table-guru').innerHTML = janaBaris(dataGuru, 'text-purple-400', 'GURU');
-    document.getElementById('log-table-pelawat').innerHTML = janaBaris(dataPelawat, 'text-orange-400', 'PELAWAT');
+  const elMurid = document.getElementById('log-table-murid');
+    const elGuru = document.getElementById('log-table-guru');
+    const elPelawat = document.getElementById('log-table-pelawat');
+
+    if(elMurid) elMurid.innerHTML = janaBaris(dataMurid, 'text-blue-400', 'MURID');
+    if(elGuru) elGuru.innerHTML = janaBaris(dataGuru, 'text-purple-400', 'GURU');
+    if(elPelawat) elPelawat.innerHTML = janaBaris(dataPelawat, 'text-orange-400', 'PELAWAT');
     // 4. PANGGIL KIRAAN TOP PENGUNJUNG (PENTING!)
     if (filteredData.length > 0) {
         kiraTopPengunjungDinamik(filteredData);
