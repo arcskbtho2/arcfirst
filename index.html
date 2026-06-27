@@ -823,30 +823,29 @@ function cetakLaporanPDF(mod) {
         rujukanCartaBar.update();
     }, 500);
 }
- function cetakLaporanPelawat() {
-    // Kita ambil data asal dan map semula supaya ada Tarikh
-    // Andaikan databaseSebenar adalah array objek anda
+function cetakLaporanPelawat() {
+    // Tapis hanya data pelawat
     let dataPelawat = databaseSebenar.filter(r => (r.kategori || "").toLowerCase().includes('pelawat'));
     
-    // Jana baris jadual dengan Tarikh
+    // Jana baris jadual (Tarikh, Masa, Nama, Institusi SAHAJA)
     let barisPelawat = dataPelawat.map(row => `
         <tr>
             <td style="padding:10px; border:1px solid #333;">${row.tarikhTeks || '-'}</td>
             <td style="padding:10px; border:1px solid #333;">${row.masa}</td>
             <td style="padding:10px; border:1px solid #333;">${row.nama}</td>
-            <td style="padding:10px; border:1px solid #333;">${row.kelas || '-'}</td> <td style="padding:10px; border:1px solid #333;">${row.aktiviti}</td>
+            <td style="padding:10px; border:1px solid #333;">${row.kelas || '-'}</td>
         </tr>`).join('');
 
     const printWindow = window.open('', '_blank');
     
-    printWindow.document.write(`<html><head><title>Sistem E-Kehadiran PSS (Lawatan)</title>
+    printWindow.document.write(`<html><head><title>Senarai Pelawat</title>
         <style>
             body{font-family:sans-serif; padding:20px;}
             table{width:100%; border-collapse:collapse;}
             th, td{padding:10px; border:1px solid #333; text-align:left;}
             h1{text-align:center;}
         </style></head><body>
-            <h1>Sistem E-Kehadiran PSS (Lawatan)</h1>
+            <h1>Rekod Pelawat PSS</h1>
             <table>
                 <thead>
                     <tr>
@@ -854,7 +853,6 @@ function cetakLaporanPDF(mod) {
                         <th>Masa</th>
                         <th>Nama</th>
                         <th>Institusi</th>
-                        <th>Sudut</th>
                     </tr>
                 </thead>
                 <tbody>${barisPelawat}</tbody>
