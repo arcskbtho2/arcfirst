@@ -552,10 +552,20 @@ function kiraTopPengunjungDinamik(data) {
     let topK = getTop(kiraKelas);
 
     // Update UI
-    document.getElementById('top-lelaki-nama').innerText = `${topL.nama} (${topL.jumlah} kali)`;
-    document.getElementById('top-perempuan-nama').innerText = `${topP.nama} (${topP.jumlah} kali)`;
-    document.getElementById('top-guru-nama').innerText = `${topG.nama} (${topG.jumlah} kali)`;
-    document.getElementById('stat-top-kelas').innerText = `${topK.nama} (${topK.jumlah} kali)`;
+document.getElementById('top-lelaki-nama').innerHTML = `
+    <div class="text-sm font-bold text-blue-400">${topL.nama}</div>
+    <div class="text-[10px] text-zinc-400">(${topL.jumlah} kali)</div>
+`;
+
+document.getElementById('top-perempuan-nama').innerHTML = `
+    <div class="text-sm font-bold text-pink-400">${topP.nama}</div>
+    <div class="text-[10px] text-zinc-400">(${topP.jumlah} kali)</div>
+`;
+
+document.getElementById('top-guru-nama').innerHTML = `
+    <div class="text-sm font-bold text-purple-400">${topG.nama}</div>
+    <div class="text-[10px] text-zinc-400">(${topG.jumlah} kali)</div>
+`;
 }
         // FUNGSI CARTA YANG TELAH DIKEMAS KINI DENGAN JUMLAH DAN PERATUS (%) DENGAN PLUGIN DATALABELS
 // 1. KEMASKINI CARTA: Menggunakan ejaan "Murid" penuh
@@ -652,10 +662,10 @@ function janaStatistikDinamik() {
         kiraTopPengunjungDinamik(filteredData);
     } else {
         // Reset jika tiada data
-        if(document.getElementById('top-lelaki-nama')) document.getElementById('top-lelaki-nama').innerText = "Tiada Data";
-        if(document.getElementById('top-perempuan-nama')) document.getElementById('top-perempuan-nama').innerText = "Tiada Data";
-        if(document.getElementById('top-guru-nama')) document.getElementById('top-guru-nama').innerText = "Tiada Data";
-        if(document.getElementById('stat-top-kelas')) document.getElementById('stat-top-kelas').innerText = "Tiada Data";
+if(document.getElementById('top-lelaki-nama')) document.getElementById('top-lelaki-nama').innerHTML = "Tiada Data";
+if(document.getElementById('top-perempuan-nama')) document.getElementById('top-perempuan-nama').innerHTML = "Tiada Data";
+if(document.getElementById('top-guru-nama')) document.getElementById('top-guru-nama').innerHTML = "Tiada Data";
+if(document.getElementById('stat-top-kelas')) document.getElementById('stat-top-kelas').innerText = "Tiada Data";
     }
 }
 
