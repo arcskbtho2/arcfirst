@@ -223,7 +223,6 @@
     <table class="w-full text-left border-collapse mb-6">
         <tbody id="log-table-pelawat"></tbody>
     </table>
-</div>
     </div>
 </section>
     </main>
@@ -702,15 +701,18 @@ function janaStatistikDinamik() {
     let dataPelawat = filteredData.filter(r => (r.kategori || "").toLowerCase().includes('pelawat'));
 
     function janaBaris(data, warna, teks) {
-        return data.map(row => `
-            <tr class="text-xs border-b border-zinc-800">
-                <td class="p-4">${row.masa}</td>
-                <td class="p-4 font-bold ${warna}">${teks}</td>
-                <td class="p-4 font-bold">${row.nama}</td>
-                <td class="p-4">${row.kelas}</td>
-                <td class="p-4 text-yellow-400">${row.sudut}</td>
-            </tr>`).join('');
+       if (data.length === 0) {
+        return `<tr><td colspan="5" class="p-4 text-center text-zinc-600 italic">Tiada rekod ${teks}</td></tr>`;
     }
+    return data.map(row => `
+        <tr class="text-xs border-b border-zinc-800">
+            <td class="p-4">${row.masa}</td>
+            <td class="p-4 font-bold ${warna}">${teks}</td>
+            <td class="p-4 font-bold">${row.nama}</td>
+            <td class="p-4">${row.kelas || '-'}</td>
+            <td class="p-4 text-yellow-400">${row.sudut}</td>
+        </tr>`).join('');
+}
 
     document.getElementById('log-table-murid').innerHTML = janaBaris(dataMurid, 'text-blue-400', 'MURID');
     document.getElementById('log-table-guru').innerHTML = janaBaris(dataGuru, 'text-purple-400', 'GURU');
