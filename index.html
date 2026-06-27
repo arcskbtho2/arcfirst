@@ -513,23 +513,21 @@ function logOut() {
 function kiraTopPengunjungDinamik(data) {
     if (!data || data.length === 0) return;
 
-    let kiraLelaki = {}, kiraPerempuan = {}, kiraGuru = {}, kiraKelas = {};
+    let kiraLelaki = {}, kiraPerempuan = {}, kiraGuru = {};
+    let kiraKelas = {};
     
     data.forEach(item => {
-        let kat = (item.kategori || "").toString().toLowerCase();
+        let kat = (item.kategori || "").toString().toLowerCase().trim();
         let nama = (item.nama || "").trim();
         let kelas = (item.kelas || "").trim();
         
-        // Memproses Guru
         if (kat.includes('guru')) {
             kiraGuru[nama] = (kiraGuru[nama] || 0) + 1;
         } else {
-            // Memproses Murid
-            if (kelas && kelas !== "Tiada Kelas") {
+            if (kelas && kelas !== "-" && kelas !== "Tiada Data") {
                 kiraKelas[kelas] = (kiraKelas[kelas] || 0) + 1;
             }
             
-            // Logik Jantina berdasarkan nama
             let n = nama.toLowerCase();
             if (n.includes('binti') || n.includes('bt') || n.includes('a/p')) {
                 kiraPerempuan[nama] = (kiraPerempuan[nama] || 0) + 1;
@@ -539,17 +537,24 @@ function kiraTopPengunjungDinamik(data) {
         }
     });
 
-    // Helper untuk mencari nilai tertinggi
+    // Fungsi untuk ambil Nama & Jumlah
     const getTop = (obj) => {
         let keys = Object.keys(obj);
-        return keys.length > 0 ? keys.reduce((a, b) => obj[a] > obj[b] ? a : b) : "Tiada Data";
+        if (keys.length === 0) return { nama: "Tiada Data", jumlah: 0 };
+        let topNama = keys.reduce((a, b) => obj[a] > obj[b] ? a : b);
+        return { nama: topNama, jumlah: obj[topNama] };
     };
 
-    // Update UI
-    document.getElementById('top-lelaki-nama').innerText = getTop(kiraLelaki);
-    document.getElementById('top-perempuan-nama').innerText = getTop(kiraPerempuan);
-    document.getElementById('top-guru-nama').innerText = getTop(kiraGuru);
-    document.getElementById('stat-top-kelas').innerText = getTop(kiraKelas);
+    let topL = getTop(kiraLelaki);
+    let topP = getTop(kiraPerempuan);
+    let topG = getTop(kiraGuru);
+    let topK = getTop(kiraKelas);
+
+    // Update UI (Pastikan ID ini wujud dalam HTML cikgu)
+    document.getElementById('top-lelaki-nama').innerText = `${topL.nama} (${topL.jumlah} kali)`;
+    document.getElementById('top-perempuan-nama').innerText = `${topP.nama} (${topP.jumlah} kali)`;
+    document.getElementById('top-guru-nama').innerText = `${topG.nama} (${topG.jumlah} kali)`;
+    document.getElementById('stat-top-kelas').innerText = `${topK.nama} (${topK.jumlah} kali)`;
 }
         // FUNGSI CARTA YANG TELAH DIKEMAS KINI DENGAN JUMLAH DAN PERATUS (%) DENGAN PLUGIN DATALABELS
 // 1. KEMASKINI CARTA: Menggunakan ejaan "Murid" penuh
