@@ -758,6 +758,13 @@ function cetakLaporanPDF(mod) {
     setTimeout(() => {
         const canvas = document.getElementById('cartaSudutBar');
         const dataUrlCarta = canvas.toDataURL('image/png');
+        
+        // --- AMBIL NILAI TOP PENGUNJUNG ---
+        const topLelaki = document.getElementById('top-lelaki-nama').innerText;
+        const topPerempuan = document.getElementById('top-perempuan-nama').innerText;
+        const topGuru = document.getElementById('top-guru-nama').innerText;
+        const topKelas = document.getElementById('stat-top-kelas').innerText;
+
         let tajukLaporan = "LAPORAN SISTEM E-KEHADIRAN PSS";
         
         if (mod === 'hari') {
@@ -773,9 +780,18 @@ function cetakLaporanPDF(mod) {
         let barisJadual = labels.map((label, i) => `<tr><td style="padding:10px; border:1px solid #333;">${label}</td><td style="padding:10px; border:1px solid #333; font-weight:bold; text-align:center;">${dataValues[i]}</td></tr>`).join('');
 
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<html><head><style>body{font-family:sans-serif; padding:40px;} table{width:100%; border-collapse:collapse;} th, td{padding:10px; border:1px solid #333;}</style></head><body>
+        printWindow.document.write(`<html><head><style>body{font-family:sans-serif; padding:40px;} table{width:100%; border-collapse:collapse;} th, td{padding:10px; border:1px solid #333;} .box-top{display:inline-block; width:23%; border:1px solid #333; padding:10px; text-align:center; margin-right:1%;}</style></head><body>
             <h1 style="text-align:center;">${tajukLaporan}</h1>
             <img src="${dataUrlCarta}" style="width:100%; max-width:600px; display:block; margin:auto;">
+            
+            <h3>Top Pengunjung:</h3>
+            <div style="margin-bottom:20px;">
+                <div class="box-top"><strong>Lelaki:</strong><br>${topLelaki}</div>
+                <div class="box-top"><strong>Perempuan:</strong><br>${topPerempuan}</div>
+                <div class="box-top"><strong>Guru:</strong><br>${topGuru}</div>
+                <div class="box-top"><strong>Kelas:</strong><br>${topKelas}</div>
+            </div>
+
             <h3>Jadual Ringkasan:</h3>
             <table><thead><tr><th>Sudut</th><th>Jumlah</th></tr></thead><tbody>${barisJadual}</tbody></table>
             <script>window.print(); window.close();<\/script>
