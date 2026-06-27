@@ -393,12 +393,27 @@ function tukarTab(tab) {
             janaStatistikDinamik();
         }
 
-        document.getElementById('input-barcode').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const barcode = this.value.trim();
-                if (barcode) { hantarKeSistem(barcode); this.value = ''; }
-            }
-        });
+       document.getElementById('input-barcode').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+        let kod = this.value.trim(); 
+        
+        // --- LOGIK PELAWAT ---
+        if (kod === "000000000000") {
+            document.getElementById('modal-pelawat').classList.remove('hidden');
+            setTimeout(() => {
+                document.getElementById('input-nama-pelawat').focus();
+            }, 300);
+            this.value = ""; 
+            return; 
+        }
+
+        // --- SISTEM ASAL CIKGU (KEKALKAN SEPERTI ASAL) ---
+        if (kod) { 
+            hantarKeSistem(kod); 
+            this.value = ''; 
+        }
+    }
+});
 
         function mulaKamera() {
             if (!html5QrcodeScanner) {
@@ -719,7 +734,28 @@ function cetakLaporanPDF(mod) {
     }, 500);
 }
 
-// --- EVENT LISTENERS & MODAL ---
+document.getElementById('btn-hantar-pelawat').addEventListener('click', function() {
+    const nama = document.getElementById('input-nama-pelawat').value;
+    const institusi = document.getElementById('input-institusi-pelawat').value;
+    
+    if (nama === "" || institusi === "") {
+        alert("Sila isi nama dan institusi!");
+        return;
+    }
+
+    const dataPelawat = {
+        nama: nama,
+        institusi: institusi,
+        sudut: sudutSemasa // Menggunakan sudut yang cikgu pilih
+    };
+
+    google.script.run.withSuccessHandler(() => {
+        alert("Data pelawat berjaya disimpan!");
+        document.getElementById('modal-pelawat').classList.add('hidden');
+        document.getElementById('input-nama-pelawat').value = "";
+        document.getElementById('input-institusi-pelawat').value = "";
+    }).rekodPelawat(dataPelawat);
+});
 // --- EVENT LISTENERS & MODAL ---
 document.addEventListener('click', function(event) {
     const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan'];
