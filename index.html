@@ -693,11 +693,22 @@ function janaStatistikDinamik() {
     tBody.innerHTML = filteredData.map(row => {
         let kat = (row.kategori || "").toString().toLowerCase().trim();
         let isGuru = kat.includes('guru');
-        let warnaKategori = isGuru ? 'text-purple-400' : 'text-blue-400';
+        let warnaKategori = '';
+    let teksKategori = '';
+        if (kat.includes('guru')) {
+        warnaKategori = 'text-purple-400';
+        teksKategori = 'GURU';
+    } else if (kat.includes('pelawat')) {
+        warnaKategori = 'text-orange-400'; // Warna khas untuk pelawat
+        teksKategori = 'PELAWAT';
+    } else {
+        warnaKategori = 'text-blue-400';
+        teksKategori = 'MURID';
+    }
         return `
             <tr class="text-xs border-b border-zinc-800">
                 <td class="p-4">${row.masa}</td>
-                <td class="p-4 font-bold ${warnaKategori}">${isGuru ? 'GURU' : 'MURID'}</td>
+                <td class="p-4 font-bold ${warnaKategori}">${teksKategori}</td>
                 <td class="p-4 font-bold">${row.nama}</td>
                 <td class="p-4">${row.kelas}</td>
                 <td class="p-4 text-yellow-400">${row.sudut}</td>
