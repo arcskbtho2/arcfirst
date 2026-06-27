@@ -642,7 +642,7 @@ function janaStatistikDinamik() {
                 <td class="p-4">${row.masa}</td>
                 <td class="p-4 font-bold ${warnaKategori}">${isGuru ? 'GURU' : 'MURID'}</td>
                 <td class="p-4 font-bold">${row.nama}</td>
-                <td class="p-4">${isGuru ? '-' : row.kelas}</td>
+                <td class="p-4">${row.kelas}</td>
                 <td class="p-4 text-yellow-400">${row.sudut}</td>
             </tr>`;
     }).join('');
