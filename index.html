@@ -520,22 +520,22 @@ function kiraTopPengunjungDinamik(data) {
         let nama = (item.nama || "").trim();
         let kelas = (item.kelas || "").trim();
         
-        // Logika Guru (PdPc/NILAM)
+        // 1. Kira untuk Murid Lelaki/Perempuan & Guru (Fungsi Asal)
         if (kat === "Guru") {
             kiraGuru[nama] = (kiraGuru[nama] || 0) + 1;
-            // Kelas paling aktif berdasarkan input guru
-            if (kelas && kelas !== "Tiada Data" && kelas !== "Tiada Kelas") {
-                kiraKelas[kelas] = (kiraKelas[kelas] || 0) + 1;
-            }
-        } 
-        // Logika Murid (Kunjungan Biasa)
-        else if (kat === "Murid") {
+        } else {
             let n = nama.toLowerCase();
             if (n.includes('binti') || n.includes('bt') || n.includes('a/p')) {
                 kiraPerempuan[nama] = (kiraPerempuan[nama] || 0) + 1;
             } else {
                 kiraLelaki[nama] = (kiraLelaki[nama] || 0) + 1;
             }
+        }
+
+        // 2. KIRA KELAS PALING AKTIF (Mengira semua rekod dari Kolum D)
+        // Kita tapis supaya tak ambil nilai kosong atau "-"
+        if (kelas && kelas !== "-" && kelas !== "Tiada Data" && kelas !== "Tiada Kelas") {
+            kiraKelas[kelas] = (kiraKelas[kelas] || 0) + 1;
         }
     });
 
@@ -551,7 +551,7 @@ function kiraTopPengunjungDinamik(data) {
     let topG = getTop(kiraGuru);
     let topK = getTop(kiraKelas);
 
-    // Update UI dengan format: Nama (Jumlah kali)
+    // Update UI
     document.getElementById('top-lelaki-nama').innerText = `${topL.nama} (${topL.jumlah} kali)`;
     document.getElementById('top-perempuan-nama').innerText = `${topP.nama} (${topP.jumlah} kali)`;
     document.getElementById('top-guru-nama').innerText = `${topG.nama} (${topG.jumlah} kali)`;
