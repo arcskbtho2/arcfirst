@@ -714,11 +714,39 @@ function cetakLaporanPDF(mod) {
 
 // --- EVENT LISTENERS & MODAL ---
 document.addEventListener('click', function(event) {
-    const inputDibenarkan = ['login-id', 'login-pass', 'input-barcode', 'filter-tarikh', 'filter-bulan'];
-    if (!inputDibenarkan.includes(event.target.id)) document.activeElement.blur();
+    // 1. Senarai ID yang perlukan interaksi manual (Keyboard & Dropdown)
+    const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan'];
+    
+    // 2. Semak jika elemen yang diklik adalah elemen manual
+    const targetId = event.target.id;
+
+    // Jika cikgu klik pada elemen manual, JANGAN buat apa-apa, biar keyboard/dropdown berfungsi
+    if (elemenManual.includes(targetId)) {
+        return;
+    }
+
+    // 3. Jika cikgu klik pada ruang kosong (bukan input, bukan dropdown), 
+    // sistem akan terus fokus ke input-barcode secara automatik untuk imbasan USB
+    document.getElementById('input-barcode').focus();
 });
 
-// Gabungan fungsi klik untuk menutup modal
+// 4. Pastikan fokus tetap pada input-barcode untuk imbasan USB
+// TAPI dengan syarat: JANGAN ganggu jika cikgu sedang menaip di Login atau pilih Kelas
+document.getElementById('input-barcode').addEventListener('blur', function(e) {
+    const target = e.relatedTarget || document.activeElement;
+    
+    // Jika fokus baru adalah Login atau Dropdown, biar sahaja dia berfungsi
+    if (target && (target.id === 'login-id' || target.id === 'login-pass' || target.id === 'select-kelas')) {
+        return;
+    }
+    
+    // Jika tidak, paksa fokus balik ke barcode supaya imbasan sentiasa sedia
+    setTimeout(() => {
+        document.getElementById('input-barcode').focus();
+    }, 150);
+});
+
+// 5. Fungsi tutup modal kelas
 window.onclick = function(event) {
     const modalKelas = document.getElementById('modal-pilih-kelas');
     if (event.target == modalKelas) {
