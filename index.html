@@ -162,6 +162,7 @@
             <input type="text" id="input-nama-pelawat" placeholder="Nama..." class="w-full mb-2 p-2 rounded">
             <input type="text" id="input-institusi-pelawat" placeholder="Institusi..." class="w-full mb-4 p-2 rounded">
             <button id="btn-hantar-pelawat" class="bg-yellow-500 w-full p-2 rounded">Hantar</button>
+            <audio id="beep-sound" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg" preload="auto"></audio>
         </div>
     </div>
         
@@ -731,17 +732,21 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 
                 // Logik Pelawat
                 if (kod === "000000000000") {
-                    document.getElementById('modal-pelawat').classList.remove('hidden');
-                    setTimeout(() => { document.getElementById('input-nama-pelawat').focus(); }, 300);
-                    this.value = ""; 
-                    return; 
-                }
+    // --- TAMBAH BUNYI BIP ---
+    const beep = document.getElementById('beep-sound');
+    if (beep) {
+        beep.play(); 
+    }
 
-                // Sistem Asal
-                if (kod) { 
-                    hantarKeSistem(kod); 
-                    this.value = ''; 
-                }
+    // --- TERUSKAN BUKA MODAL ---
+    const modal = document.getElementById('modal-pelawat');
+    if (modal) {
+        modal.classList.remove('hidden');
+        document.getElementById('input-nama-pelawat').focus();
+    }
+    this.value = ""; 
+    return; 
+}
             }
         });
     }
@@ -764,19 +769,16 @@ window.addEventListener('DOMContentLoaded', (event) => {
                 sudut: typeof sudutSemasa !== 'undefined' ? sudutSemasa : "Pintu Utama"
             };
 
-            if (typeof google !== 'undefined' && google.script) {
-            google.script.run.withSuccessHandler(() => {
-                alert("Data pelawat berjaya disimpan!");
-                document.getElementById('modal-pelawat').classList.add('hidden');
-                document.getElementById('input-nama-pelawat').value = "";
-                document.getElementById('input-institusi-pelawat').value = "";
-})
-        .withFailureHandler((err) => {
-            alert("Ralat: " + err.message);
+        try {
+    google.script.run
+        .withSuccessHandler(() => {
+            alert("Data pelawat berjaya disimpan!");
+            document.getElementById('modal-pelawat').classList.add('hidden');
         })
         .rekodPelawat(dataPelawat);
-} else {
-    alert("Ralat: Sistem tidak dapat berhubung dengan Google Server. Sila buka melalui URL Web App yang betul.");
+} catch (e) {
+    console.error("Google Script belum sedia: ", e);
+    alert("Sistem sedang bersedia, sila tekan sekali lagi.");
 }
 
     // 3. EVENT LISTENERS LAIN (Fokus Barcode, dll)
