@@ -770,9 +770,8 @@ function cetakLaporanPDF(mod) {
 }
 
 // --- EVENT LISTENERS & MODAL ---
-// --- EVENT LISTENERS & MODAL ---
 document.addEventListener('click', function(event) {
-    const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan'];
+    const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan', 'input-nama-pelawat', 'input-institusi-pelawat'];
     
     // Jika cikgu klik pada elemen manual, JANGAN buat apa-apa, biar keyboard/dropdown berfungsi
     if (elemenManual.includes(event.target.id)) {
