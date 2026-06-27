@@ -716,28 +716,31 @@ function cetakLaporanPDF(mod) {
 // --- EVENT LISTENERS & MODAL ---
 document.addEventListener('click', function(event) {
     const inputDibenarkan = ['login-id', 'login-pass', 'input-barcode', 'filter-tarikh', 'filter-bulan'];
-    if (!inputDibenarkan.includes(event.target.id)) document.activeElement.blur();
+    
+    // Jika kita klik pada input yang dibenarkan, kita bagi fokus
+    if (inputDibenarkan.includes(event.target.id)) {
+        document.getElementById('input-barcode').focus();
+    } 
+    // Jika tidak, biarkan fokus tetap di barcode (kecuali untuk filter/login)
+    else if (event.target.id !== 'input-barcode') {
+        document.getElementById('input-barcode').focus();
+    }
 });
 
-// Gabungan fungsi klik untuk menutup modal
+// Pastikan kursor sentiasa kembali ke input-barcode jika tertekan keluar
+document.getElementById('input-barcode').addEventListener('blur', function() {
+    setTimeout(() => {
+        this.focus();
+    }, 150);
+});
+
+// Fungsi tutup modal kelas
 window.onclick = function(event) {
     const modalKelas = document.getElementById('modal-pilih-kelas');
     if (event.target == modalKelas) {
         modalKelas.classList.add('hidden');
     }
 };
-        // Auto-focus ke input barcode setiap kali pengguna klik mana-mana tempat di skrin
-document.addEventListener('click', function() {
-    document.getElementById('input-barcode').focus();
-});
-
-// Pastikan kursor kekal dalam kotak input walaupun pengguna tekan butang lain
-document.getElementById('input-barcode').addEventListener('blur', function() {
-    setTimeout(() => {
-        this.focus();
-    }, 100);
-});
-
 // Tamat skrip
 </script>
 </body>
