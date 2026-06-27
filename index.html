@@ -780,23 +780,34 @@ function cetakLaporanPDF(mod) {
         let barisJadual = labels.map((label, i) => `<tr><td style="padding:10px; border:1px solid #333;">${label}</td><td style="padding:10px; border:1px solid #333; font-weight:bold; text-align:center;">${dataValues[i]}</td></tr>`).join('');
 
         const printWindow = window.open('', '_blank');
-        printWindow.document.write(`<html><head><style>body{font-family:sans-serif; padding:40px;} table{width:100%; border-collapse:collapse;} th, td{padding:10px; border:1px solid #333;} .box-top{display:inline-block; width:23%; border:1px solid #333; padding:10px; text-align:center; margin-right:1%;}</style></head><body>
+    
+         let htmlTopPengunjung = "";
+        if (mod === 'bulan') {
+            htmlTopPengunjung = `
+                <h3 style="margin-bottom: 10px;">🏅 Top Pengunjung Bulanan:</h3>
+                <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                    <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Murid Lelaki:</strong> ${topLelaki}</li>
+                    <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Murid Perempuan:</strong> ${topPerempuan}</li>
+                    <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Guru:</strong> ${topGuru}</li>
+                    <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Kelas Paling Aktif:</strong> ${topKelas}</li>
+                </ul>`;
+        }
+
+            printWindow.document.write(`<html><head><style>
+            body{font-family:sans-serif; padding:40px;} 
+            table{width:100%; border-collapse:collapse; margin-bottom: 20px;} 
+            th, td{padding:10px; border:1px solid #333;}
+        </style></head><body>
             <h1 style="text-align:center;">${tajukLaporan}</h1>
-            <img src="${dataUrlCarta}" style="width:100%; max-width:600px; display:block; margin:auto;">
+            <img src="${dataUrlCarta}" style="width:100%; max-width:600px; display:block; margin:auto; margin-bottom:20px;">
             
-          <h3 style="margin-bottom: 10px;">🏅 Top Pengunjung:</h3>
-    <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
-        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Murid Lelaki:</strong> ${topLelaki}</li>
-        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Murid Perempuan:</strong> ${topPerempuan}</li>
-        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Guru:</strong> ${topGuru}</li>
-        <li style="padding: 5px 0; border-bottom: 1px solid #eee;"><strong>Kelas Paling Aktif:</strong> ${topKelas}</li>
-    </ul>
+            ${htmlTopPengunjung}
 
             <h3>Jadual Ringkasan:</h3>
             <table><thead><tr><th>Sudut</th><th>Jumlah</th></tr></thead><tbody>${barisJadual}</tbody></table>
             <script>window.print(); window.close();<\/script>
         </body></html>`);
-
+        
         rujukanCartaBar.options.scales.x.ticks.color = originalTicksX;
         rujukanCartaBar.options.scales.y.ticks.color = originalTicksY;
         rujukanCartaBar.options.plugins.datalabels.color = originalDataLabels;
