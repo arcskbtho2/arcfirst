@@ -733,7 +733,33 @@ function cetakLaporanPDF(mod) {
         rujukanCartaBar.update();
     }, 500);
 }
+// --- KOD BARCODE & LOGIK PELAWAT ---
+window.addEventListener('DOMContentLoaded', (event) => {
+    const inputBarcode = document.getElementById('input-barcode');
+    if (inputBarcode) {
+        inputBarcode.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                let kod = this.value.trim();
+                
+                // 1. Logik Pelawat (Kod Khas)
+                if (kod === "000000000000") {
+                    document.getElementById('modal-pelawat').classList.remove('hidden');
+                    setTimeout(() => { document.getElementById('input-nama-pelawat').focus(); }, 300);
+                    this.value = ""; 
+                    return; 
+                }
 
+                // 2. Sistem Asal Murid/Guru
+                if (kod) { 
+                    hantarKeSistem(kod); 
+                    this.value = ''; 
+                }
+            }
+        });
+    }
+});
+
+// --- BUTANG HANTAR PELAWAT ---
 document.getElementById('btn-hantar-pelawat').addEventListener('click', function() {
     const nama = document.getElementById('input-nama-pelawat').value;
     const institusi = document.getElementById('input-institusi-pelawat').value;
@@ -746,7 +772,7 @@ document.getElementById('btn-hantar-pelawat').addEventListener('click', function
     const dataPelawat = {
         nama: nama,
         institusi: institusi,
-        sudut: sudutSemasa // Menggunakan sudut yang cikgu pilih
+        sudut: sudutSemasa // Pastikan variabel sudutSemasa wujud dalam sistem cikgu
     };
 
     google.script.run.withSuccessHandler(() => {
@@ -756,11 +782,12 @@ document.getElementById('btn-hantar-pelawat').addEventListener('click', function
         document.getElementById('input-institusi-pelawat').value = "";
     }).rekodPelawat(dataPelawat);
 });
+
 // --- EVENT LISTENERS & MODAL ---
 document.addEventListener('click', function(event) {
     const elemenManual = ['login-id', 'login-pass', 'select-kelas', 'filter-tarikh', 'filter-bulan'];
     
-    // Jika cikgu klik pada elemen manual, JANGAN buat apa-apa, biar keyboard/dropdown berfungsi
+    // Jika cikgu klik pada elemen manual, JANGAN buat apa-apa
     if (elemenManual.includes(event.target.id)) {
         return;
     }
@@ -781,7 +808,7 @@ document.getElementById('input-barcode').addEventListener('blur', function(e) {
         return;
     }
     
-    // Delay 150ms supaya sistem sempat buka dropdown/keyboard sebelum tarik balik fokus
+    // Delay 150ms supaya sistem sempat buka dropdown/keyboard
     setTimeout(() => {
         document.getElementById('input-barcode').focus();
     }, 150);
