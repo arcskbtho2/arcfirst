@@ -232,7 +232,7 @@
     <script>
 localStorage.clear();
     sessionStorage.clear();
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwtpfjxa4jE1VhrsnHV6atbN8_31RveGDCf8j3tVgbF1uItytmIHndzbZG1F8Ec5c7N3g/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz8db2q9xoY-Fgk8rFgxkofGLoNPl7C0ho8zOc_yRd7ypfFzOHllahjT_iFsZA3wgExVg/exec"; 
     let sudutSemasa = "Ruang Bacaan & Google TV"; 
     let html5QrcodeScanner = null;
     let modAnalisaSemasa = "hari"; 
@@ -585,50 +585,58 @@ function kiraTopPengunjungDinamik(data) {
         });
     }
 function janaStatistikDinamik() {
-        const targetHari = document.getElementById('filter-tarikh').value;
-        const bulanDipilih = document.getElementById('filter-bulan').value;
-        
-        let filteredData = databaseSebenar.filter(item => {
-            if (!item.tarikhTeks) return false;
-            let tarikhItem = formatTarikhStandard(item.tarikhTeks);
-            if (modAnalisaSemasa === 'hari') {
-                return tarikhItem === targetHari;
-            } else {
-                let targetBulan = String(parseInt(bulanDipilih) + 1).padStart(2, '0');
-                return tarikhItem.split('-')[1] === targetBulan;
-            }
-        });
-
-        document.getElementById('stat-total').innerText = filteredData.length;
-        
-        // Kira Sudut Popular
-        let kaunter = { "Ruang Bacaan & Google TV": 0, "Ruang Permainan Dalaman": 0, "Red spot": 0, "DBHOSS NovaTech": 0, "Sudut Komik": 0, "Ruang Pameran": 0, "Studio TVPSS": 0, "Bilik Tayang": 0, "PdPc/Nilam": 0, "Lawatan": 0 };
-        filteredData.forEach(item => { if(kaunter.hasOwnProperty(item.sudut)) kaunter[item.sudut]++; });
-        let popular = Object.keys(kaunter).reduce((a, b) => kaunter[a] > kaunter[b] ? a : b);
-        document.getElementById('stat-popular').innerText = filteredData.length > 0 ? popular : "Tiada Data";
-
-        kemasKiniCartaBar(kaunter);
-        
-       const tBody = document.getElementById('log-table-body');
-tBody.innerHTML = filteredData.map(row => {
-    let kat = (row.kategori || "").toString().toLowerCase().trim();
-    let isGuru = kat.includes('guru');
+    const targetHari = document.getElementById('filter-tarikh').value;
+    const bulanDipilih = document.getElementById('filter-bulan').value;
     
-    // Penambahan class warna: text-blue-400 untuk Murid, text-purple-400 untuk Guru
-    let warnaKategori = isGuru ? 'text-purple-400' : 'text-blue-400';
+    // 1. Logik Filter (JANGAN UBAH INI)
+    let filteredData = databaseSebenar.filter(item => {
+        if (!item.tarikhTeks) return false;
+        let tarikhItem = formatTarikhStandard(item.tarikhTeks);
+        if (modAnalisaSemasa === 'hari') {
+            return tarikhItem === targetHari;
+        } else {
+            let targetBulan = String(parseInt(bulanDipilih) + 1).padStart(2, '0');
+            return tarikhItem.split('-')[1] === targetBulan;
+        }
+    });
+
+    document.getElementById('stat-total').innerText = filteredData.length;
     
-    return `
-        <tr class="text-xs border-b border-zinc-800">
-            <td class="p-4">${row.masa}</td>
-            <td class="p-4 font-bold ${warnaKategori}">${isGuru ? 'GURU' : 'MURID'}</td>
-            <td class="p-4 font-bold">${row.nama}</td>
-            <td class="p-4">${isGuru ? '-' : row.kelas}</td>
-            <td class="p-4 text-yellow-400">${row.sudut}</td>
-        </tr>`;
-}).join('');
-        
+    // 2. Kira Sudut Popular
+    let kaunter = { "Ruang Bacaan & Google TV": 0, "Ruang Permainan Dalaman": 0, "Red spot": 0, "DBHOSS NovaTech": 0, "Sudut Komik": 0, "Ruang Pameran": 0, "Studio TVPSS": 0, "Bilik Tayang": 0, "PdPc/Nilam": 0, "Lawatan": 0 };
+    filteredData.forEach(item => { if(kaunter.hasOwnProperty(item.sudut)) kaunter[item.sudut]++; });
+    let popular = Object.keys(kaunter).reduce((a, b) => kaunter[a] > kaunter[b] ? a : b);
+    document.getElementById('stat-popular').innerText = filteredData.length > 0 ? popular : "Tiada Data";
+
+    kemasKiniCartaBar(kaunter);
+    
+    // 3. Render Jadual
+    const tBody = document.getElementById('log-table-body');
+    tBody.innerHTML = filteredData.map(row => {
+        let kat = (row.kategori || "").toString().toLowerCase().trim();
+        let isGuru = kat.includes('guru');
+        let warnaKategori = isGuru ? 'text-purple-400' : 'text-blue-400';
+        return `
+            <tr class="text-xs border-b border-zinc-800">
+                <td class="p-4">${row.masa}</td>
+                <td class="p-4 font-bold ${warnaKategori}">${isGuru ? 'GURU' : 'MURID'}</td>
+                <td class="p-4 font-bold">${row.nama}</td>
+                <td class="p-4">${isGuru ? '-' : row.kelas}</td>
+                <td class="p-4 text-yellow-400">${row.sudut}</td>
+            </tr>`;
+    }).join('');
+    
+    // 4. PANGGIL KIRAAN TOP PENGUNJUNG (PENTING!)
+    if (filteredData.length > 0) {
         kiraTopPengunjungDinamik(filteredData);
+    } else {
+        // Reset jika tiada data
+        if(document.getElementById('top-lelaki-nama')) document.getElementById('top-lelaki-nama').innerText = "Tiada Data";
+        if(document.getElementById('top-perempuan-nama')) document.getElementById('top-perempuan-nama').innerText = "Tiada Data";
+        if(document.getElementById('top-guru-nama')) document.getElementById('top-guru-nama').innerText = "Tiada Data";
+        if(document.getElementById('stat-top-kelas')) document.getElementById('stat-top-kelas').innerText = "Tiada Data";
     }
+}
 
     function kiraTopPengunjungDinamik(data) {
         let kiraLelaki = {}, kiraPerempuan = {}, kiraGuru = {}, infoPengguna = {}, kiraKelas = {};
