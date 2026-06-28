@@ -590,30 +590,35 @@ function prosesHantarKeServer(barcode, kelas, namaManual = "", institusiManual =
     })
     .then(response => response.json())
     .then(data => {
-        if (data.status === "success") {
+        // Logik Debugging: Kita check apa yang server hantar
+        console.log("Respons dari Server:", data);
+
+        if (data && data.status === "success") {
             mainBunyiBip();
-            paparNotifikasi(`🎉 Berjaya! ${data.nama}`, 'success');
+            paparNotifikasi(" 🎉 Berjaya! " + data.nama, 'success');
             
-            // Logik asal anda dikekalkan di sini
             let objMasa = new Date();
             databaseSebenar.unshift({ 
                 tarikhTeks: objMasa.toLocaleDateString('en-GB').split('/').join('-'), 
                 masa: objMasa.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }), 
                 nama: data.nama, 
-                kelas: kelas || data.kelas, 
+                kelas: kelas || data.kelas || '-', 
                 sudut: sudutSemasa,
                 kategori: data.kategori 
             });
             
-            // Jana statistik terus menggunakan data terkini yang baru di-unshift
             janaStatistikDinamik();
         } else {
-            paparNotifikasi(`❌ Ralat: ${data.mesej}`, 'error');
+            // SINI PENTING: Kalau data.status bukan success, dia akan bagitahu sebabnya
+            let mesejRalat = data && data.mesej ? data.mesej : "Data tidak ditemui dalam sistem.";
+            paparNotifikasi("❌ Ralat: " + mesejRalat, 'error');
+            console.warn("Ralat Server:", mesejRalat);
         }
         isScanning = false;
     })
     .catch(err => {
-        paparNotifikasi(`⚠️ Ralat sistem!`, 'error');
+        console.error("Fetch Error:", err);
+        paparNotifikasi("⚠️ Ralat sistem: Periksa sambungan internet!", 'error');
         isScanning = false;
     });
 }
